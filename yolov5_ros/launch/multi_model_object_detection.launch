@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<launch>
+
+    <!--    YCB dataset    -->
+    <arg name="frame_rate_ycb" default="10"/>
+    <arg name="score_threshold_ycb" default="0.5"/>
+    <arg name="iou_threshold_ycb" default="0.45"/>
+    <arg name="config_ycb" default="$(find yolov5_ros)/configs/yolov5m_ycb.yaml"/>
+    <arg name="weights_path_ycb" default="$(find yolov5_ros)/weights/yolov5m_ycb.pt"/>
+
+    <!--    COCO dataset    -->
+    <arg name="frame_rate_coco" default="10"/>
+    <arg name="score_threshold_coco" default="0.5"/>
+    <arg name="iou_threshold_coco" default="0.45"/>
+    <arg name="config_coco" default="$(find yolov5_ros)/configs/yolov5m.yaml"/>
+    <arg name="weights_path_coco" default="$(find yolov5_ros)/weights/yolov5m.pt"/>
+
+    <arg name="device" default="cuda"/>
+
+    <node pkg="yolov5_ros" type="yolov5_multi_model_object_detection_node.py" name="yolov5_multi_model_object_detection_node" output="screen">
+
+        <!--    Common    -->
+        <param name="device" value="$(arg device)"/>
+
+        <!--    YCB dataset    -->
+        <param name="frame_rate_1" value="$(arg frame_rate_ycb)"/>
+        <param name="score_threshold_1" value="$(arg score_threshold_ycb)"/>
+        <param name="iou_threshold_1" value="$(arg iou_threshold_ycb)"/>
+
+        <param name="config_1" value="$(arg config_ycb)"/>
+        <param name="weights_path_1" value="$(arg weights_path_ycb)"/>
+
+        <remap from="/input/image/compressed_1" to="/hsrb/head_rgbd_sensor/rgb/image_rect_color/compressed"/>
+        <remap from="/input/activation_1" to="/yolov5_ros/input/activation"/>
+        <remap from="/output/image/compressed_1" to="/yolov5_ros/output/image/compressed"/>
+        <remap from="/output/bounding_boxes_1" to="/yolov5_ros/output/bounding_boxes"/>
+        <remap from="/check_for_objects_1" to="/yolov5_ros/check_for_objects"/>
+
+        <!--    COCO dataset    -->
+        <param name="frame_rate_2" value="$(arg frame_rate_coco)"/>
+        <param name="score_threshold_2" value="$(arg score_threshold_coco)"/>
+        <param name="iou_threshold_2" value="$(arg iou_threshold_coco)"/>
+
+        <param name="config_2" value="$(arg config_coco)"/>
+        <param name="weights_path_2" value="$(arg weights_path_coco)"/>
+
+        <remap from="/input/image/compressed_2" to="/hsrb/head_rgbd_sensor/rgb/image_rect_color/compressed"/>
+        <remap from="/input/activation_2" to="/yolov5_ros_coco/input/activation"/>
+        <remap from="/output/image/compressed_2" to="/yolov5_ros_coco/output/image/compressed"/>
+        <remap from="/output/bounding_boxes_2" to="/yolov5_ros_coco/output/bounding_boxes"/>
+        <remap from="/check_for_objects_2" to="/yolov5_ros_coco/check_for_objects"/>
+
+    </node>
+
+</launch>
